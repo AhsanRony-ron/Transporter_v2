@@ -1,4 +1,4 @@
-void lcd(int lx, int ly, int rx, int ry) {
+void lcd(int A, int B, int C, int D) {
   u8g2.clearBuffer();
   u8g2.setDrawColor(1);
   u8g2.setFont(u8g2_font_5x7_tr);
@@ -28,5 +28,6 @@ void lcd(int lx, int ly, int rx, int ry) {
 }
 
 // void LCDMotor(int a, int b, int c, int d) {
+
 
 // }
