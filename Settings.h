@@ -54,7 +54,7 @@ const int servo_capit = 26;
 const int servo_angkat = 27;
 
 int speedlimmit = 128;
-int maxspeed;
+int maxspeed, A, B, C, D;
 
 int G1 = ServoUD;
 int G2 = ServoRL;
