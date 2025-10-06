@@ -1,25 +1,23 @@
-int applyDeadZone(int val, int dz) {
-  return (abs(val) < dz) ? 0 : val;
+// ======== HELPERS ========
+int applyDeadZone(int val){
+  return (abs(val) < DEADZONE) ? 0 : val;
 }
 
-void controlMecanum(int forward, int strafe, int rotate) {
-  // deadzone
-  int vy = applyDeadZone(forward, 15);
-  int vx = applyDeadZone(strafe, 15);
-  int w  = applyDeadZone(rotate, 10);
+// ======== CONTROL MECANUM (panggil tiap loop, input joystick -128..127) ========
+void controlMecanum(int forward, int strafe, int rotate){
+  int vy = applyDeadZone(forward);
+  int vx = applyDeadZone(strafe);
+  int w  = applyDeadZone(rotate);
 
-  // mapping joystick ke speed
   vy = map(vy, -128, 127, -maxspeed, maxspeed);
   vx = map(vx, -128, 127, -maxspeed, maxspeed);
   w  = map(w,  -128, 127, -maxspeed, maxspeed);
 
-  // hitung motor
-  int mFL = vx - vy - w;  // front left  (A)
-  int mFR = vx + vy + w;  // front right (B)
-  int mRL = vx + vy - w;  // rear left   (C)
-  int mRR = vx - vy + w;  // rear right  (D)
+  int mFL = vx - vy - w;
+  int mFR = vx + vy + w;
+  int mRL = vx + vy - w;
+  int mRR = vx - vy + w;
 
-  // normalisasi
   int maxCalc = max(max(abs(mFL), abs(mFR)), max(abs(mRL), abs(mRR)));
   if (maxCalc > maxspeed) {
     mFL = mFL * maxspeed / maxCalc;
@@ -28,39 +26,53 @@ void controlMecanum(int forward, int strafe, int rotate) {
     mRR = mRR * maxspeed / maxCalc;
   }
 
-  // kirim ke motor
-  setMotor(0, mFL); // A
-  setMotor(1, mFR); // B
-  setMotor(2, mRL); // C
-  setMotor(3, mRR); // D
+  int moveMag = abs(vx) + abs(vy) + abs(w);
+
+  setMotor(0, mFL, moveMag);
+  setMotor(1, mFR, moveMag);
+  setMotor(2, mRL, moveMag);
+  setMotor(3, mRR, moveMag);
 }
 
-void setMotor(int id, int speed) {
+// ======== SETMOTOR: RIGID BRAKE ONLY ========
+void setMotor(int id, int speed, int moveMag){
+  static int prevSpeed[4] = {0,0,0,0};
+
   int pin1, pin2, pwm;
-
-  switch(id) {
-    case 0: // Front Left (A)
-      pin1 = Am1; pin2 = Am2; pwm = PWMa; break;
-    case 1: // Front Right (B)
-      pin1 = Bm1; pin2 = Bm2; pwm = PWMb; break;
-    case 2: // Rear Left (C)
-      pin1 = Cm1; pin2 = Cm2; pwm = PWMc; break;
-    case 3: // Rear Right (D)
-      pin1 = Dm1; pin2 = Dm2; pwm = PWMd; break;
-    default:
-      return;
+  switch(id){
+    case 0: pin1 = Am1; pin2 = Am2; pwm = PWMa; break;
+    case 1: pin1 = Bm1; pin2 = Bm2; pwm = PWMb; break;
+    case 2: pin1 = Cm1; pin2 = Cm2; pwm = PWMc; break;
+    case 3: pin1 = Dm1; pin2 = Dm2; pwm = PWMd; break;
+    default: return;
   }
 
-  if (speed > 0) {
-    digitalWrite(pin1, HIGH);
-    digitalWrite(pin2, LOW);
-  } else if (speed < 0) {
-    digitalWrite(pin1, LOW);
-    digitalWrite(pin2, HIGH);
-  } else {
-    digitalWrite(pin1, LOW);
-    digitalWrite(pin2, LOW);
+  // Jika ada perintah gerak -> drive normal
+  if (speed != 0){
+    if (speed > 0){
+      digitalWrite(pin1, HIGH);
+      digitalWrite(pin2, LOW);
+    } else {
+      digitalWrite(pin1, LOW);
+      digitalWrite(pin2, HIGH);
+    }
+    ledcWrite(pwm, abs(speed));
+    prevSpeed[id] = speed;
+    return;
   }
 
-  ledcWrite(pwm, abs(speed));
+  // speed == 0 -> RIGID BRAKE: selalu short-brake untuk pivot/hold
+  int brakePWM = constrain(abs(prevSpeed[id]) / 2, MIN_BRAKE_PWM, maxspeed / 2);
+  digitalWrite(pin1, HIGH);
+  digitalWrite(pin2, HIGH);
+  ledcWrite(pwm, brakePWM);
+  prevSpeed[id] = 0;
 }
+
+// ======== PRESET HELPERS ========
+void forward(int s){ controlMecanum(s, 0, 0); }
+void backward(int s){ controlMecanum(-s, 0, 0); }
+void strafeRight(int s){ controlMecanum(0, s, 0); }
+void strafeLeft(int s){ controlMecanum(0, -s, 0); }
+void rotateCW(int s){ controlMecanum(0, 0, s); }
+void rotateCCW(int s){ controlMecanum(0, 0, -s); }
