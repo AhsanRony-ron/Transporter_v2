@@ -47,6 +47,9 @@ void updateButton() {\
   // RY             = Ps3.data.analog.stick.ry;
 }
 
+const int DEADZONE = 15;
+const int MIN_BRAKE_PWM = 30;
+
 Servo servocapit;
 Servo servoangkat;
 
