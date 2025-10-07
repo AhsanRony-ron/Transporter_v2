@@ -7,6 +7,7 @@ void onConnect() {
 void setup() {
   Serial.begin(115200);
   
+  Wire.setClock(400000);
   Ps3.attachOnConnect(onConnect);
   Ps3.begin(MacAddress);
 
