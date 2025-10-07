@@ -34,10 +34,8 @@ void controlMecanum(int forward, int strafe, int rotate){
   setMotor(3, mRR, moveMag);
 }
 
-// ======== SETMOTOR: RIGID BRAKE ONLY ========
+// ======== SETMOTOR: RIGID BRAKE ONLY (SIMPLIFIED) ========
 void setMotor(int id, int speed, int moveMag){
-  static int prevSpeed[4] = {0,0,0,0};
-
   int pin1, pin2, pwm;
   switch(id){
     case 0: pin1 = Am1; pin2 = Am2; pwm = PWMa; break;
@@ -50,23 +48,18 @@ void setMotor(int id, int speed, int moveMag){
   // Jika ada perintah gerak -> drive normal
   if (speed != 0){
     if (speed > 0){
-      digitalWrite(pin1, HIGH);
-      digitalWrite(pin2, LOW);
+      digitalWrite(pin1, HIGH); digitalWrite(pin2, LOW);
     } else {
-      digitalWrite(pin1, LOW);
-      digitalWrite(pin2, HIGH);
+      digitalWrite(pin1, LOW); digitalWrite(pin2, HIGH);
     }
     ledcWrite(pwm, abs(speed));
-    prevSpeed[id] = speed;
     return;
   }
 
-  // speed == 0 -> RIGID BRAKE: selalu short-brake untuk pivot/hold
-  int brakePWM = constrain(abs(prevSpeed[id]) / 2, MIN_BRAKE_PWM, maxspeed / 2);
+  // speed == 0 -> RIGID BRAKE: selalu short-brake dengan level tetap (MIN_BRAKE_PWM)
   digitalWrite(pin1, HIGH);
   digitalWrite(pin2, HIGH);
-  ledcWrite(pwm, brakePWM);
-  prevSpeed[id] = 0;
+  ledcWrite(pwm, MIN_BRAKE_PWM);
 }
 
 // ======== PRESET HELPERS ========
