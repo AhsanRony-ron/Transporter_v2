@@ -1,8 +1,8 @@
 void capit(){
   capiton = !capiton;
 
-  if (capiton) {servocapit.write(190);}
-  else {servocapit.write(100);}
+  if (capiton) {servocapit.write(110);}
+  else {servocapit.write(10);}
 
   Serial.println("capit");
   delay(200);
@@ -10,7 +10,7 @@ void capit(){
 
 void resetposisiongriper(){G1 = 0;}
 
-void resetposisiYongriper(){G1 = 140;}
+void resetposisiYongriper(){G1 = 144;}
 
 void griperhead1() {
   if (Up && G1 <= 140) {G1+=4; Serial.println(G1); delay(servoSpeed);}
