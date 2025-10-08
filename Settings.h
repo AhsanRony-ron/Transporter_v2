@@ -32,6 +32,24 @@ bool ResetYposition = false;
 bool SpeedUp      = false;
 bool SpeedDown    = false;
 
+//detect when no button pressed
+bool noButtonPressed(){
+  return !(
+    Ps3.data.button.l1 ||
+    Ps3.data.button.r2 ||
+    Ps3.data.button.r1 ||
+    Ps3.data.button.square ||
+    Ps3.data.button.cross ||
+    Ps3.data.button.r3 ||
+    Ps3.data.button.triangle ||
+    Ps3.data.button.cross ||
+    Ps3.data.analog.stick.ly ||
+    Ps3.data.analog.stick.lx ||
+    Ps3.data.analog.stick.ry ||
+    Ps3.data.analog.stick.rx
+  ); 
+}
+
 // Button settings
 void updateButton() {\
   Grip           = Ps3.data.button.l1;
