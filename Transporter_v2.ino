@@ -92,5 +92,10 @@ void loop() {
   updateButton();
 
   controlMecanum(-lx, ly, -rx);
-  lcd(lx, ly, rx, ry);
+
+  if (noButtonPressed()) {
+    oledDisplay();
+  } else {
+    lcd(lx, ly, rx, ry);
+  }
 }
