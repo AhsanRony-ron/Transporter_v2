@@ -89,10 +89,9 @@ const unsigned char idleIcon[] PROGMEM = {
 void lcd(int A, int B, int C, int D) {
   u8g2.clearBuffer();
   u8g2.setDrawColor(1);
-  u8g2.setFont(u8g2_font_5x7_tr);
 
-
-  u8g2.drawStr(0, 32, Ps3.isConnected() ? "Connect" : "Disconnect");
+  u8g2.setFont(u8g2_font_doomalpha04_te);
+  u8g2.drawStr(0, 12, Ps3.isConnected() ? "Connect" : "Disconnect");
 
   u8g2.setCursor(87, 12);
   u8g2.print(A);
@@ -110,8 +109,6 @@ void lcd(int A, int B, int C, int D) {
 
   // u8g2.drawLine(107, 1, 107, 18);
 
-  u8g2.drawStr(1, 64, "128");
-
   u8g2.sendBuffer();
 }
 
@@ -127,3 +124,4 @@ void oledDisplay() {
 
 
 // }
+
