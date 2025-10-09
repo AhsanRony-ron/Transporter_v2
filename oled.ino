@@ -94,9 +94,9 @@ void drawMotorBar(int x, int y, int value, int maxVal, const char* label) {
 
   u8g2.drawFrame(x + 15, y - 6, 42, 8);
 
-  if (value > 0){
+  if (value > 0) {
     u8g2.drawBox(x + 16, y - 5, barWidth, 6);
-  } else if (value < 0){
+  } else if (value < 0) {
     u8g2.drawBox(x + 56 - barWidth, y - 5, barWidth, 6);
   }
 
