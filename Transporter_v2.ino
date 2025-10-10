@@ -93,9 +93,18 @@ void loop() {
 
   controlMecanum(-lx, ly, -rx);
 
-  if (noButtonPressed()) {
-    oledDisplay();
+  if (!noButtonPressed()) {
+    lastButtonTime = millis();
+    idle = false;
+    mainDisplay();
   } else {
-    lcd(lx, ly, rx, ry);
+    if (millis() - lastButtonTime >= idleTimeout){
+      if (!idle){
+        idle = true;
+        idleDisplay();
+      }
+    } else {
+      mainDisplay();
+    }
   }
 }

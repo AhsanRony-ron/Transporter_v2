@@ -86,33 +86,40 @@ const unsigned char idleIcon[] PROGMEM = {
    0x00, 0x01, 0x00, 0x31, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x00,
    0x04, 0xfe, 0x6f, 0x00 };
 
-void lcd(int A, int B, int C, int D) {
+void drawMotorBar(int x, int y, int value, int maxVal, const char* label) {
+
+  int barWidth = map(abs(value), 0, maxVal, 0, 40);
+  u8g2.setFont(u8g2_font_micro_tr);
+  u8g2.drawStr(x, y, label);
+
+  u8g2.drawFrame(x + 15, y - 6, 42, 8);
+
+  if (value > 0) {
+    u8g2.drawBox(x + 16, y - 5, barWidth, 6);
+  } else if (value < 0) {
+    u8g2.drawBox(x + 56 - barWidth, y - 5, barWidth, 6);
+  }
+
+  u8g2.setCursor(x + 60, y);
+  u8g2.print(value);
+}
+
+void mainDisplay() {
   u8g2.clearBuffer();
   u8g2.setDrawColor(1);
 
-  u8g2.setFont(u8g2_font_doomalpha04_te);
-  u8g2.drawStr(0, 12, Ps3.isConnected() ? "Connect" : "Disconnect");
+  u8g2.setFont(u8g2_font_micro_tr);
+  u8g2.drawLine(0, 8, 128, 8);
 
-  u8g2.setCursor(87, 12);
-  u8g2.print(A);
-
-  u8g2.setCursor(109, 12);
-  u8g2.print(B);
-
-  u8g2.setCursor(87, 22);
-  u8g2.print(C);
-
-  u8g2.setCursor(109, 22);
-  u8g2.print(D);
-
-  // u8g2.drawLine(127, 9, 87, 9);
-
-  // u8g2.drawLine(107, 1, 107, 18);
+  drawMotorBar(0, 20, motorFrontLeft , 256, "FL");
+  drawMotorBar(0, 32, motorFrontRight, 256, "FR");
+  drawMotorBar(0, 44, motorRearLeft  , 256, "RL");
+  drawMotorBar(0, 56, motorRearRight , 256, "RR");
 
   u8g2.sendBuffer();
 }
 
-void oledDisplay() {
+void idleDisplay() {
   u8g2.clearBuffer();
   u8g2.setDrawColor(1);
 

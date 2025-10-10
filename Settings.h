@@ -50,8 +50,13 @@ bool noButtonPressed(){
   ); 
 }
 
+unsigned long lastButtonTime = 0;
+const unsigned long idleTimeout = 3000;
+bool idle = false;
+int motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight;
+
 // Button settings
-void updateButton() {\
+void updateButton() {
   Grip           = Ps3.data.button.l1;
   Up             = Ps3.data.button.r2;
   Down           = Ps3.data.button.r1;
