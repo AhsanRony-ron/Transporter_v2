@@ -136,8 +136,3 @@ void idleDisplay() {
   u8g2.drawXBM(0, 0, 128, 64, idleIcon);
   u8g2.sendBuffer();
 } 
-
-// void LCDMotor(int a, int b, int c, int d) {
-
-
-// }
