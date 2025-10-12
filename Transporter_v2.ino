@@ -52,6 +52,7 @@ void setup() {
   servoangkat.write(G1);
   // servoputar.write(G2);
   u8g2.begin();
+  battery_begin();
 
 
   digitalWrite(STBY, HIGH); //mod
@@ -68,15 +69,17 @@ void loop() {
   int ry  = Ps3.data.analog.stick.ry;  
 
   // speed control
-  if (Ps3.data.analog.button.l2 > 254) {
+  if (Ps3.data.analog.button.l2 > 240) {
     maxspeed = speedlimmit; }
   else if (Ps3.data.analog.button.l2 > 0) {
-    maxspeed = speedlimmit/3*2; }
+    maxspeed = speedlimmit*3/4; }
   else {maxspeed = speedlimmit/2;}
 
   // speed limmit
-  if (SpeedUp) {speedlimmit = 256; delay(300);}
-  if (SpeedDown) {speedlimmit = 128; delay(300);}
+  if (SpeedUp) {speedlimmit = 255; delay(300);}
+  if (SpeedDown) {speedlimmit = 127; delay(300);}
+  if (StanBY) {STBYStatus = !STBYStatus; digitalWrite(STBY, STBYStatus ? HIGH : LOW); delay(300);}
+  // if (BreakUp) {BreakStatus = !BreakStatus; MIN_BRAKE_PWM = BreakStatus ? 30 : 255; delay(300);}
 
   // idk wtf is this
   // if (speed >= 160) {maxspeed = 160;} 
@@ -85,26 +88,77 @@ void loop() {
 
   // gripper/feture
   if (Grip) {capit();}
-  if (ResetPosition) {resetposisiongriper();}
-  if (ResetYposition) {resetposisiYongriper();}
+  if (ResetPosition) {ReposisionGripper();}
+  // if (ResetYposition) {resetposisiYongriper();}
     
   griperhead1();
   updateButton();
+  battery_update();
 
   controlMecanum(-lx, ly, -rx);
 
-  if (!noButtonPressed()) {
-    lastButtonTime = millis();
-    idle = false;
-    mainDisplay();
-  } else {
-    if (millis() - lastButtonTime >= idleTimeout){
-      if (!idle){
-        idle = true;
-        idleDisplay();
-      }
-    } else {
-      mainDisplay();
-    }
-  }
+  // if (!noButtonPressed()) {
+  //   lastButtonTime = millis();
+  //   idle = false;
+  //   mainDisplay();
+  // } else {
+  //   if (millis() - lastButtonTime >= idleTimeout){
+  //     if (!idle){
+  //       idle = true;
+  //       idleDisplay();
+  //     }
+  //   } else {
+  //     mainDisplay();
+  //   }
+  // }
+
+  if (idlebutton) {sl = !sl; delay(200);}
+  if (sl) {idleDisplay();}
+  else {mainDisplay();}
+}
+
+// ===== API =====
+void battery_begin() {
+  analogReadResolution(ADC_BITS);
+  analogSetPinAttenuation(BAT_PIN, ADC_11db); // ADC1, extend input range
+  // init buffer with current reading
+  uint16_t v = analogRead(BAT_PIN);
+  for (int i = 0; i < NUM_SAMPLES; ++i) samples[i] = v;
+  sampleIdx = 0;
+  samplesSum = (uint32_t)v * NUM_SAMPLES;
+  sampleCount = NUM_SAMPLES;
+
+  // compute initial voltage
+  float v_adc = ((float)v / (float)ADC_MAX) * VREF;
+  batteryVoltage = v_adc * ((R1 + R2) / R2);
+  batteryVoltage = batteryVoltage * calib_scale + calib_offset;
+}
+
+void battery_update() {
+  unsigned long now = millis();
+  if (now - lastSampleMillis < SAMPLE_INTERVAL_MS) return; // non-blocking throttle
+  lastSampleMillis = now;
+
+  uint16_t raw = analogRead(BAT_PIN); // very fast
+
+  // circular buffer sum update
+  samplesSum -= samples[sampleIdx];
+  samples[sampleIdx] = raw;
+  samplesSum += raw;
+  sampleIdx = (sampleIdx + 1) % NUM_SAMPLES;
+  if (sampleCount < NUM_SAMPLES) sampleCount++;
+
+  float avgRaw = (float)samplesSum / (float)sampleCount;
+  float v_adc = (avgRaw / (float)ADC_MAX) * VREF;
+  float v_batt = v_adc * ((R1 + R2) / R2);
+
+  // apply small smoothing (light)
+  const float EMA_ALPHA = 0.25f; // 0..1 (bigger = faster)
+  v_batt = v_batt * calib_scale + calib_offset;
+  batteryVoltage = (EMA_ALPHA * v_batt) + ((1.0f - EMA_ALPHA) * batteryVoltage);
+}
+
+// Ambil tegangan terakhir (V)
+float getBatteryVoltage() {
+  return batteryVoltage;
 }
