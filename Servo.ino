@@ -34,8 +34,8 @@ void ReposisionGripper() {
 // void resetposisiYongriper(){G1 = 144;}
 
 void griperhead1() {
-  if (Up && G1 <= 140) {G1+=4; Serial.println(G1); delay(servoSpeed);}
-  if (Down && G1 >= 0) {G1-=4; Serial.println(G1); delay(servoSpeed);
+  if (Up && G1 < 140) {G1+=5; Serial.println(G1);}
+  if (Down && G1 > 0) {G1-=5; Serial.println(G1);
   if (G1 < 0) {G1 = 0;}}
 
   servoangkat.write(G1); 
