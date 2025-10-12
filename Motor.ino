@@ -26,6 +26,11 @@ void controlMecanum(int forward, int strafe, int rotate){
     mRR = mRR * maxspeed / maxCalc;
   }
 
+  if (abs(mFL) <= 3) mFL = 0;
+  if (abs(mFR) <= 3) mFR = 0;
+  if (abs(mRL) <= 3) mRL = 0;
+  if (abs(mRR) <= 3) mRR = 0;
+
   motorFrontLeft  = mFL;
   motorFrontRight = mFR;
   motorRearLeft   = mRL;
