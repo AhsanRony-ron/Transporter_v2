@@ -109,12 +109,22 @@ void mainDisplay() {
   u8g2.setDrawColor(1);
 
   u8g2.setFont(u8g2_font_micro_tr);
-  u8g2.drawLine(0, 8, 128, 8);
 
-  drawMotorBar(0, 20, motorFrontLeft , 256, "FL");
-  drawMotorBar(0, 32, motorFrontRight, 256, "FR");
-  drawMotorBar(0, 44, motorRearLeft  , 256, "RL");
-  drawMotorBar(0, 56, motorRearRight , 256, "RR");
+  drawMotorBar(50, 20, motorFrontLeft , 255, "FL");
+  drawMotorBar(50, 32, motorFrontRight, 255, "FR");
+  drawMotorBar(50, 44, motorRearLeft  , 255, "RL");
+  drawMotorBar(50, 56, motorRearRight , 255, "RR");
+
+  u8g2.drawStr(0, 12, Ps3.isConnected() ? "Connect" : "Disconnect");
+  u8g2.drawStr(0, 24, capiton ? "Grp" : "Ungrip");
+  u8g2.setCursor(0, 36);
+  u8g2.print(map(G1, 140, 0, 0, 90));
+  u8g2.drawStr(0, 48, STBYStatus ? "STBY on" : "STBY off");
+
+  float v = getBatteryVoltage();
+  char buf[10];
+  snprintf(buf, sizeof(buf), "%.2fV", v);
+  u8g2.drawStr(0, 60, buf);
 
   u8g2.sendBuffer();
 }
@@ -131,4 +141,3 @@ void idleDisplay() {
 
 
 // }
-
