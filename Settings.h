@@ -32,8 +32,8 @@ bool BreakUp        = false;
 bool SpeedUp      = false;
 bool SpeedDown    = false;
 
-bool noButtonPressed(){
-  return !(
+bool ButtonPressed(){
+  return 
     Ps3.data.button.l1 ||
     Ps3.data.button.r2 ||
     Ps3.data.button.r1 ||
@@ -46,12 +46,11 @@ bool noButtonPressed(){
     Ps3.data.analog.stick.lx ||
     Ps3.data.analog.stick.ry ||
     Ps3.data.analog.stick.rx
-  ); 
+  ; 
 }
 
-unsigned long lastButtonTime = 0;
-const unsigned long idleTimeout = 3000;
-bool idle = false;
+unsigned long lastReposTime = 0;   // waktu terakhir reset
+const unsigned long reposDelay = 300; // delay 500 ms antar reset
 
 // Button settings
 void updateButton() {\
@@ -81,7 +80,7 @@ int speedlimmit = 128;
 int maxspeed, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight;
 
 int G1 = ServoUD;
-int G2 = ServoRL;
+int G2 = ServoGrip;
 
 int PWMa = 3;
 int PWMb = 4;

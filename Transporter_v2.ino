@@ -91,26 +91,11 @@ void loop() {
   if (ResetPosition) {ReposisionGripper();}
   // if (ResetYposition) {resetposisiYongriper();}
     
-  griperhead1();
+  griper();
   updateButton();
   battery_update();
 
   controlMecanum(-lx, ly, -rx);
-
-  // if (!noButtonPressed()) {
-  //   lastButtonTime = millis();
-  //   idle = false;
-  //   mainDisplay();
-  // } else {
-  //   if (millis() - lastButtonTime >= idleTimeout){
-  //     if (!idle){
-  //       idle = true;
-  //       idleDisplay();
-  //     }
-  //   } else {
-  //     mainDisplay();
-  //   }
-  // }
 
   if (idlebutton) {sl = !sl; delay(200);}
   if (sl) {idleDisplay();}
