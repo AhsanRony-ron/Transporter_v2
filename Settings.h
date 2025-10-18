@@ -28,12 +28,12 @@ bool idlebutton   = false;
 bool Right        = false;
 bool ResetPosition = false;
 bool StanBY       = false;
-bool BreakUp        = false;
+bool speedChange  = false;
 bool SpeedUp      = false;
 bool SpeedDown    = false;
 
 bool ButtonPressed(){
-  return 
+  return !(
     Ps3.data.button.l1 ||
     Ps3.data.button.r2 ||
     Ps3.data.button.r1 ||
@@ -46,22 +46,24 @@ bool ButtonPressed(){
     Ps3.data.analog.stick.lx ||
     Ps3.data.analog.stick.ry ||
     Ps3.data.analog.stick.rx
-  ; 
+  ); 
 }
 
-unsigned long lastReposTime = 0;   // waktu terakhir reset
-const unsigned long reposDelay = 300; // delay 500 ms antar reset
+unsigned long timeA = 0;   // waktu terakhir reset
+unsigned long timeB = 0; 
+unsigned long timeC = 0; 
+bool idle = false;
 
 // Button settings
 void updateButton() {\
   Grip           = Ps3.data.button.l1;
   Up             = Ps3.data.button.r2;
   Down           = Ps3.data.button.r1;
-  // Left           = Ps3.data.button.l1;
+  speedChange    = Ps3.data.button.r3;
   idlebutton          = Ps3.data.button.select;
   ResetPosition  = Ps3.data.button.square;
   StanBY         = Ps3.data.button.start;
-  BreakUp          = Ps3.data.button.r3;
+  //BreakUp          = Ps3.data.button.r3;
   SpeedUp        = Ps3.data.button.triangle;
   SpeedDown      = Ps3.data.button.cross;
   // RY             = Ps3.data.analog.stick.ry;
@@ -104,9 +106,10 @@ const int Bm1 = 33; // placeholder
 const int STBY = 4;
 
 bool DefaultControl = true;
-bool capiton = false;
-bool STBYStatus = true;
+bool capiton = true;
+bool STBYStatus = false;
 bool sl;
+bool sc = false;
 // bool BreakStatus = true;
 
 int frequency = 30000;

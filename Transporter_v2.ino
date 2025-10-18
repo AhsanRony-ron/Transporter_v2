@@ -2,6 +2,7 @@
 
 void onConnect() {
   Serial.println("Connected.");
+  STBYStatus = true;
 }
 
 void setup() {
@@ -54,8 +55,6 @@ void setup() {
   u8g2.begin();
   battery_begin();
 
-
-  digitalWrite(STBY, HIGH); //mod
 }
 
 
@@ -75,11 +74,11 @@ void loop() {
     maxspeed = speedlimmit*3/4; }
   else {maxspeed = speedlimmit/2;}
 
-  // speed limmit
-  if (SpeedUp) {speedlimmit = 255; delay(300);}
-  if (SpeedDown) {speedlimmit = 127; delay(300);}
-  if (StanBY) {STBYStatus = !STBYStatus; digitalWrite(STBY, STBYStatus ? HIGH : LOW); delay(300);}
-  // if (BreakUp) {BreakStatus = !BreakStatus; MIN_BRAKE_PWM = BreakStatus ? 30 : 255; delay(300);}
+  if (StanBY) {STBYStatus = !STBYStatus; delay(300);}
+
+  if (speedChange) {speedChanging();}
+
+  digitalWrite(STBY, STBYStatus ? HIGH : LOW);
 
   // idk wtf is this
   // if (speed >= 160) {maxspeed = 160;} 
@@ -117,6 +116,15 @@ void battery_begin() {
   float v_adc = ((float)v / (float)ADC_MAX) * VREF;
   batteryVoltage = v_adc * ((R1 + R2) / R2);
   batteryVoltage = batteryVoltage * calib_scale + calib_offset;
+}
+
+void speedChanging() {
+  unsigned long now = millis();
+  if (now - timeC < 500) return; // cegah double trigger
+  timeC = now;
+
+  sc = !sc; 
+  speedlimmit = sc ? 128 : 255;
 }
 
 void battery_update() {
