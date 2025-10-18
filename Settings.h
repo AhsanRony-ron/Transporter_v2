@@ -18,8 +18,6 @@ int ServoUD = 0;
 
 int servoSpeed = 5; //ms
 
-// int RY = 0;
-
 // button declarations
 bool Grip         = false;
 bool Up           = false;
@@ -32,27 +30,26 @@ bool speedChange  = false;
 bool SpeedUp      = false;
 bool SpeedDown    = false;
 
-bool ButtonPressed(){
-  return !(
-    Ps3.data.button.l1 ||
-    Ps3.data.button.r2 ||
-    Ps3.data.button.r1 ||
-    Ps3.data.button.square ||
-    Ps3.data.button.cross ||
-    Ps3.data.button.r3 ||
-    Ps3.data.button.triangle ||
-    Ps3.data.button.cross ||
-    Ps3.data.analog.stick.ly ||
-    Ps3.data.analog.stick.lx ||
-    Ps3.data.analog.stick.ry ||
-    Ps3.data.analog.stick.rx
-  ); 
-}
+// bool ButtonPressed(){
+//   return !(
+//     Ps3.data.button.l1 ||
+//     Ps3.data.button.r2 ||
+//     Ps3.data.button.r1 ||
+//     Ps3.data.button.square ||
+//     Ps3.data.button.cross ||
+//     Ps3.data.button.r3 ||
+//     Ps3.data.button.triangle ||
+//     Ps3.data.button.cross ||
+//     Ps3.data.analog.stick.ly ||
+//     Ps3.data.analog.stick.lx ||
+//     Ps3.data.analog.stick.ry ||
+//     Ps3.data.analog.stick.rx
+//   ); 
+// }
 
-unsigned long timeA = 0;   // waktu terakhir reset
-unsigned long timeB = 0; 
-unsigned long timeC = 0; 
-bool idle = false;
+// anti double click
+unsigned long timeA, timeB, timeC;  
+ 
 
 // Button settings
 void updateButton() {\
@@ -110,7 +107,7 @@ bool capiton = true;
 bool STBYStatus = false;
 bool sl;
 bool sc = false;
-// bool BreakStatus = true;
+bool idle = false;
 
 int frequency = 30000;
 int resolution = 8;
