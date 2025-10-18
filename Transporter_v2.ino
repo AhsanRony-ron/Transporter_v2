@@ -87,8 +87,14 @@ void loop() {
 
   controlMecanum(-lx, ly, -rx);
 
-  if (idlebutton) {sl = !sl; delay(200);}
-  if (sl) {idleDisplay();}
+  if (idlebutton) {
+    displayPage += 1; 
+    if (displayPage == 3) {displayPage = 0;} 
+    delay(200);
+  }
+
+  if (displayPage == 1) {idleDisplay();}
+  else if (displayPage == 2) {nameDisplay();}
   else {mainDisplay();}
 }
 

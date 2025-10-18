@@ -111,7 +111,7 @@ bool idle = false;
 
 int frequency = 30000;
 int resolution = 8;
-
+int displayPage;
 // ===== CONFIG =====
 const int BAT_PIN = 35;            // ADC1 pin (GPIO34 recommended)
 const float R1 = 1000000.0f;        // top resistor (ohm)

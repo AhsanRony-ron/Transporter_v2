@@ -115,3 +115,13 @@ void idleDisplay() {
   u8g2.drawXBM(0, 0, 128, 64, idleIcon);
   u8g2.sendBuffer();
 } 
+
+void nameDisplay() {
+  u8g2.clearBuffer();
+  u8g2.setDrawColor(1);
+  u8g2.setFont(u8g2_font_logisoso18_tr);
+  u8g2.drawStr(0, 48, "Narukami");
+
+  u8g2.sendBuffer();
+
+}
