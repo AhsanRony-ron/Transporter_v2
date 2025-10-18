@@ -51,16 +51,13 @@ void setup() {
 
   servocapit.write(ServoGrip);
   servoangkat.write(G1);
-  // servoputar.write(G2);
+
   u8g2.begin();
   battery_begin();
-
 }
 
 
 void loop() {
-  // if(!Ps3.isConnected()) return;
-
   // Default joystick
   int ly  = Ps3.data.analog.stick.ly;
   int lx  = Ps3.data.analog.stick.lx;
@@ -80,15 +77,9 @@ void loop() {
 
   digitalWrite(STBY, STBYStatus ? HIGH : LOW);
 
-  // idk wtf is this
-  // if (speed >= 160) {maxspeed = 160;} 
-  // if (speed <= 65 ) {maxspeed = 64;}
-  // else {maxspeed = speed;}
-
   // gripper/feture
   if (Grip) {capit();}
   if (ResetPosition) {ReposisionGripper();}
-  // if (ResetYposition) {resetposisiYongriper();}
     
   griper();
   updateButton();
