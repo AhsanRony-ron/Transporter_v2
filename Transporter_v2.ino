@@ -76,6 +76,7 @@ void loop() {
   if (speedChange) {speedChanging();}
 
   digitalWrite(STBY, STBYStatus ? HIGH : LOW);
+  speedlimmit = sc ? 128 : 255;
 
   // gripper/feture
   if (Grip) {capit();}
@@ -89,12 +90,13 @@ void loop() {
 
   if (idlebutton) {
     displayPage += 1; 
-    if (displayPage == 3) {displayPage = 0;} 
+    if (displayPage == 4) {displayPage = 0;} 
     delay(200);
   }
 
   if (displayPage == 1) {idleDisplay();}
   else if (displayPage == 2) {nameDisplay();}
+  else if (displayPage == 3) {AccelSetting();}
   else {mainDisplay();}
 }
 
@@ -121,7 +123,6 @@ void speedChanging() {
   timeC = now;
 
   sc = !sc; 
-  speedlimmit = sc ? 128 : 255;
 }
 
 void battery_update() {

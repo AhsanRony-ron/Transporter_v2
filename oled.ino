@@ -123,5 +123,32 @@ void nameDisplay() {
   u8g2.drawStr(0, 48, "Narukami");
 
   u8g2.sendBuffer();
+}
 
+void AccelSetting() {
+  if (UpArrow) {
+    if (valpos == 1) {accelPerMs += 1;}
+    if (valpos == 2) {accelPerMs += 0.1;}
+    if (valpos == 3) {accelPerMs += 0.01;}
+    delay(200);
+  }
+    if (DownArrow) {
+    if (valpos == 1) {accelPerMs -= 1;}
+    if (valpos == 2) {accelPerMs -= 0.1;}
+    if (valpos == 3) {accelPerMs -= 0.01;}
+    delay(200);
+  }
+
+  if (RightArrow && valpos < 3) {valpos +=1; delay(200);}
+  if (LeftArrow && valpos > 1) {valpos -=1; delay(200);}
+
+  u8g2.clearBuffer();
+  u8g2.setDrawColor(1);
+  u8g2.setFont(u8g2_font_logisoso18_tr);
+  u8g2.setCursor(0, 32);
+  u8g2.print(accelPerMs);
+  u8g2.setCursor(0, 64);
+  u8g2.print(valpos);
+
+  u8g2.sendBuffer();
 }

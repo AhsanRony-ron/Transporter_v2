@@ -9,7 +9,7 @@
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
 // MacAddres
-const char* MacAddress = "12:34:56:78:90:ab";
+const char* MacAddress = "12:13:27:45:11:ab";
 
 // Servo position Default
 int ServoGrip = 100;
@@ -28,7 +28,12 @@ bool ResetPosition = false;
 bool StanBY       = false;
 bool speedChange  = false;
 bool SpeedUp      = false;
-bool SpeedDown    = false;
+bool SpeedDown      = false;
+bool UpArrow    = false;
+bool DownArrow    = false;
+bool RightArrow    = false;
+bool LeftArrow    = false;
+
 
 // bool ButtonPressed(){
 //   return !(
@@ -64,6 +69,11 @@ void updateButton() {\
   SpeedUp        = Ps3.data.button.triangle;
   SpeedDown      = Ps3.data.button.cross;
   // RY             = Ps3.data.analog.stick.ry;
+  UpArrow    = Ps3.data.button.up;
+  DownArrow    = Ps3.data.button.down; 
+  RightArrow    = Ps3.data.button.right;
+  LeftArrow    = Ps3.data.button.left;
+
 }
 
 const int DEADZONE = 20;
@@ -95,10 +105,10 @@ const int Cm2 = 0;
 const int Cm1 = 2;
 const int Dm2 = 16;
 const int Dm1 = 17;
-const int Am2 = 23; // placeholder
-const int Am1 = 19; // placeholder
-const int Bm2 = 32; // placeholder
-const int Bm1 = 33; // placeholder
+const int Am1 = 23; // placeholder
+const int Am2 = 19; // placeholder
+const int Bm1 = 32; // placeholder
+const int Bm2 = 33; // placeholder
 
 const int STBY = 4;
 
@@ -106,12 +116,12 @@ bool DefaultControl = true;
 bool capiton = true;
 bool STBYStatus = false;
 bool sl;
-bool sc = false;
+bool sc = true;
 bool idle = false;
 
 int frequency = 30000;
 int resolution = 8;
-int displayPage;
+int displayPage, valpos;
 // ===== CONFIG =====
 const int BAT_PIN = 35;            // ADC1 pin (GPIO34 recommended)
 const float R1 = 1000000.0f;        // top resistor (ohm)
@@ -133,4 +143,13 @@ static uint32_t samplesSum = 0;
 static unsigned int sampleCount = 0;
 static unsigned long lastSampleMillis = 0;
 static float batteryVoltage = 0.0f; // latest computed voltage
+
+// ======== RAMP / ACCEL GLOBALS ========
+int currentPWMval[4] = {0, 0, 0, 0}; // nilai PWM saat ini yang dikirim ke motor (ramped)
+unsigned long lastRampMillis = 0;
+
+// berapa unit PWM per millisecond (kalibrasi sederhana)
+// contoh: 1 = 1 pwm per ms -> 1000 pwm/s (cukup cepat), 0.1 not allowed (pakai int).
+// gunakan 1 sesuai permintaanmu
+float accelPerMs = 1.0f; // rekomendasi awal
 #endif
